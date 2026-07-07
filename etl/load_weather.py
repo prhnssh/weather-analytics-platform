@@ -14,7 +14,7 @@ df = pd.read_csv("data/processed/weather_daily.csv")
 
 # загрузка данных в PostgreSQL
 df.to_sql(
-    "weather_data",
+    "weather_daily",
     engine,
     schema="weather",
     if_exists="append",
