@@ -9,7 +9,7 @@ engine = create_engine(
 
 
 # загрузка обработанных данных
-df = pd.read_csv("../data/processed/weather_daily.csv")
+df = pd.read_csv("data/processed/weather_daily.csv")
 
 
 # загрузка данных в PostgreSQL
