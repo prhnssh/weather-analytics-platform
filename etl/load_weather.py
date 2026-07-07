@@ -8,11 +8,11 @@ engine = create_engine(
 )
 
 
-# читаем подготовленные данные
-df = pd.read_csv("../data/processed/weather.csv")
+# загрузка обработанных данных
+df = pd.read_csv("../data/processed/weather_daily.csv")
 
 
-# загружаем в PostgreSQL
+# загрузка данных в PostgreSQL
 df.to_sql(
     "weather_data",
     engine,
