@@ -2,25 +2,24 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 
-def load_weather(file_path):
-    """
-    Load transformed weather data into PostgreSQL
-    """
-
-    df = pd.read_csv(file_path)
-
-    # подключение к БД 
-    engine = create_engine("postgresql://user:password@localhost:5432/weather_db")
-
-    df.to_sql(
-        "weather_daily",
-        engine,
-        if_exists="replace",
-        index=False
-    )
-
-    print("Data loaded into PostgreSQL")
+# подключение к PostgreSQL
+engine = create_engine(
+    "postgresql://postgres:postgres@localhost:5432/analytics"
+)
 
 
-if __name__ == "__main__":
-    load_weather("data/processed/weather_daily.csv")
+# читаем подготовленные данные
+df = pd.read_csv("../data/processed/weather.csv")
+
+
+# загружаем в PostgreSQL
+df.to_sql(
+    "weather_data",
+    engine,
+    schema="weather",
+    if_exists="append",
+    index=False
+)
+
+
+print("Данные успешно загружены")
