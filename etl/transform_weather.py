@@ -37,10 +37,14 @@ def transform_weather(input_path, output_path):
 
     result.to_csv(os.path.join(output_path, "weather_daily.csv"), index=False)
 
-    print("Transform completed. File saved to:", output_path)
+    output_file = os.path.join(output_path, "weather_daily.csv")
 
-    return result
+    result.to_csv(output_file, index=False)
 
+    print(f"Преобразование завершено. Файл сохранен: {output_file}")
+ 
+    return output_file
+ 
 
 if __name__ == "__main__":
     df = transform_weather(
