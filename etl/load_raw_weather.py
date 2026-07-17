@@ -3,34 +3,33 @@ import glob
 from sqlalchemy import create_engine
 
 
-engine = create_engine(
-    "postgresql://postgres:postgres@localhost:5432/analytics"
-)
+def load_raw_weather(input_path):
 
-files = glob.glob("data/raw/*.csv")
+    engine = create_engine(
+        "postgresql://airflow:airflow@postgres:5432/airflow"
+    )
 
-all_data = []
+    files = glob.glob(f"{input_path}/*.csv")
 
-for file in files:
-    df = pd.read_csv(file)
+    all_data = []
 
-    city = file.split("weather_raw_")[1].split("_2025")[0]
+    for file in files:
+        df = pd.read_csv(file)
 
-    df["city"] = city
+        city = file.split("weather_raw_")[1].split("_2025")[0]
 
-    all_data.append(df)
+        df["city"] = city
 
+        all_data.append(df)
 
-result = pd.concat(all_data, ignore_index=True)
+    result = pd.concat(all_data, ignore_index=True)
 
+    result.to_sql(
+        "weather_raw",
+        engine,
+        schema="weather",
+        if_exists="append",
+        index=False
+    )
 
-result.to_sql(
-    "weather_raw",
-    engine,
-    schema="weather",
-    if_exists="append",
-    index=False
-)
-
-
-print("Исходные данные загружены:", len(result))
+    print("Исходные данные загружены:", len(result))

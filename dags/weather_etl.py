@@ -1,4 +1,5 @@
 from etl.extract_weather import extract_weather
+from etl.load_raw_weather import load_raw_weather
 from etl.transform_weather import transform_weather
 from etl.load_daily_weather import load_daily_weather
 from datetime import datetime, timedelta
@@ -62,6 +63,14 @@ with DAG(
 
         extract_tasks.append(task)
 
+    raw_task = PythonOperator(
+        task_id="load_raw_weather",
+        python_callable=load_raw_weather,
+        op_kwargs={
+            "input_path": "/opt/airflow/data/raw",
+    },
+)
+
     transform_task = PythonOperator(
         task_id="transform_weather",
         python_callable=transform_weather,
@@ -80,6 +89,6 @@ with DAG(
 )
 
     for task in extract_tasks:
-        task >> transform_task
+        task >> raw_task
 
-    transform_task >> load_task
+    raw_task >> transform_task >> load_task
