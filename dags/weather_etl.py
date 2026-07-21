@@ -2,6 +2,7 @@ from etl.extract_weather import extract_weather
 from etl.load_raw_weather import load_raw_weather
 from etl.transform_weather import transform_weather
 from etl.load_daily_weather import load_daily_weather
+from etl.check_data_quality import check_data_quality
 from etl.build_dashboard_mart import build_dashboard_mart
 from datetime import datetime, timedelta
 
@@ -89,6 +90,11 @@ with DAG(
     },
 )
 
+    quality_task = PythonOperator(
+        task_id="check_data_quality",
+        python_callable=check_data_quality,
+)
+
     build_mart_task = PythonOperator(
         task_id="build_dashboard_mart",
         python_callable=build_dashboard_mart
@@ -97,4 +103,4 @@ with DAG(
     for task in extract_tasks:
         task >> raw_task
 
-    raw_task >> transform_task >> load_task >> build_mart_task
+    raw_task >> transform_task >> load_task >> quality_task >> build_mart_task
