@@ -1,5 +1,5 @@
 import pandas as pd
-from sqlalchemy import create_engine
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 from sqlalchemy.types import Date
 
 
@@ -8,9 +8,11 @@ def load_daily_weather(input_path):
     Загружаем обработанные данные о погоде в PostgreSQL.
     """
 
-    engine = create_engine(
-        "postgresql://airflow:airflow@postgres:5432/airflow"
+    hook = PostgresHook(
+        postgres_conn_id="postgres_analitica"
     )
+
+    engine = hook.get_sqlalchemy_engine()
 
     df = pd.read_csv(input_path)
 
