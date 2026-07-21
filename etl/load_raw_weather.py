@@ -1,13 +1,18 @@
 import pandas as pd
 import glob
-from sqlalchemy import create_engine
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 
 def load_raw_weather(input_path):
+    """
+    Загружаем сырые данные о погоде в PostgreSQL.
+    """
 
-    engine = create_engine(
-        "postgresql://airflow:airflow@postgres:5432/airflow"
+    hook = PostgresHook(
+        postgres_conn_id="postgres_analitica"
     )
+
+    engine = hook.get_sqlalchemy_engine()
 
     files = glob.glob(f"{input_path}/*.csv")
 
