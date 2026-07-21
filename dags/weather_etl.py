@@ -2,6 +2,7 @@ from etl.extract_weather import extract_weather
 from etl.load_raw_weather import load_raw_weather
 from etl.transform_weather import transform_weather
 from etl.load_daily_weather import load_daily_weather
+from etl.build_dashboard_mart import build_dashboard_mart
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -88,7 +89,12 @@ with DAG(
     },
 )
 
+    build_mart_task = PythonOperator(
+        task_id="build_dashboard_mart",
+        python_callable=build_dashboard_mart
+)
+
     for task in extract_tasks:
         task >> raw_task
 
-    raw_task >> transform_task >> load_task
+    raw_task >> transform_task >> load_task >> build_mart_task
